@@ -3,6 +3,7 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 
 from .models import Flight, Passanger
+from .forms import UserForm
 
 # Create your views here.
 def index(request):
@@ -24,3 +25,17 @@ def book(request, flight_id):
         passanger = Passanger.objects.get(pk=int(request.POST["passanger"]))
         passanger.flights.add(flight)
         # return HttpResponseRedirect(reverse("index")) 
+
+def user(request):
+    if request.method == "POST":
+        form = UserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return render(request, "flights/user.html", {
+                "form": form
+            })
+    else:
+        form = UserForm()
+    return render(request, "flights/forms.html", {
+        "form": form
+    })
